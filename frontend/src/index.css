@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-tertiary: var(--color-tertiary);
+  --color-accent: var(--color-accent);
+}
+
+@layer base {
+  :root {
+    --color-primary: hsl(235, 50%, 90%);
+    --color-secondary: hsl(235, 50%, 10%);
+    --color-tertiary: hsl(295, 80%, 20%);
+    --color-accent: hsl(175, 80%, 20%);
+  }
+
+  .dark {
+    --color-primary: hsl(235, 50%, 10%);
+    --color-secondary: hsl(235, 50%, 90%);
+    --color-tertiary: hsl(295, 80%, 80%);
+    --color-accent: hsl(175, 80%, 80%);
+  }
+}
+
+body {
+  margin: 0;
+  @apply bg-primary text-secondary;
+}
