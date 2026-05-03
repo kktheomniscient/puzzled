@@ -32,3 +32,19 @@ dist-ssr/
 
 # Vite
 .vite/
+
+# Python
+backend/venv/
+backend/env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+build/
+*.egg-info/
+.mypy_cache/
