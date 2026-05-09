@@ -48,3 +48,6 @@ htmlcov/
 build/
 *.egg-info/
 .mypy_cache/
+
+#puzzles
+/puzzle_csv
