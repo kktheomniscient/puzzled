@@ -28,18 +28,21 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
     await websocket.accept()
     try:
         async with websocket.app.state.pool.acquire() as connection:
-            fen = await connection.fetchrow('SELECT fen FROM puzzles where id = $1',random.randint(0,100))
-            print(fen)
+            # ran = random.randint(0,100)
+            ran = 1
+            row = await connection.fetchrow('SELECT fen,moves FROM puzzles where id = $1',ran)
+            # print(fen)
             # Transmit the initial game FEN upon successful connection
             await websocket.send_json({
                 "type": "init", 
-                "fen": fen["fen"],
+                "fen": row["fen"],
+                "move" : row["moves"].split(' ')[0],
                 "room_id": room_id
             })
         
         while True:
-            # Keep connection open. We can handle incoming moves here later.
             data = await websocket.receive_text()
+            print(data)
             pass
             
     except WebSocketDisconnect:

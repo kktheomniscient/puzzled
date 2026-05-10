@@ -5,28 +5,34 @@ const STANDARD_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
 
 export const useGameStore = create((set, get) => ({
     fen: STANDARD_FEN,
-    ws: null,
     
     setFen: (newFen) => {
         set({ fen: newFen });
     },
 
+    resetGame: () => {
+        set({ fen: STANDARD_FEN });
+    }
+}));
+
+export const useSockeStore = create((set, get) => ({
+    ws: null,
+    data: null,
+    
     connectWebSocket: (roomId) => {
-        if (get().ws) return; // already connected
-        
-        if (!roomId) return; // Need a room to connect
+        if (get().ws) return;
+
+        if (!roomId) return;
 
         const socket = new WebSocket(`ws://localhost:8000/ws/game/${roomId}`);
-        
+
         socket.onopen = () => {
             console.log(`Connected to room: ${roomId}`);
         };
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            if (data.type === 'init' || data.type === 'update') {
-                set({ fen: data.fen });
-            }
+            set({ data: data.fen });
         };
 
         socket.onclose = () => {
@@ -40,15 +46,10 @@ export const useGameStore = create((set, get) => ({
     disconnectWebSocket: () => {
         const ws = get().ws;
         if (ws) {
-            // Only close if it's open, to prevent the strict mode warning
-            if (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING) {
+            if (ws.readyState === WebSocket.OPEN) {
                 ws.close();
             }
             set({ ws: null });
         }
-    },
-
-    resetGame: () => {
-        set({ fen: STANDARD_FEN });
     }
 }));

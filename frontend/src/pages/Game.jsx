@@ -2,20 +2,18 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { ChessBoard } from 'react-chessboard-ui';
 import 'react-chessboard-ui/dist/index.css';
-import { useGameStore } from '../store/useGameStore';
+import { useGameStore, useSockeStore } from '../store/useGameStore';
 
 export const Game = () => {
     const { roomId } = useParams();
-    const { fen, setFen, resetGame, connectWebSocket, disconnectWebSocket } = useGameStore();
+    const { fen, setFen, resetGame } = useGameStore();
+    const { data, connectWebSocket, disconnectWebSocket } = useSockeStore();
     const [squareSize, setSquareSize] = useState(40); // default mobile size
 
     useEffect(() => {
-        // Connect to the WebSocket when the component mounts
         connectWebSocket(roomId);
 
-        // Calculate and set board size based on screen width
         const handleResize = () => {
-            // max width of 500px, but shrinks on mobile (subtracting 32px for page padding)
             const availableWidth = Math.min(window.innerWidth - 32, 500);
             setSquareSize(Math.floor(availableWidth / 8));
         };
@@ -29,13 +27,15 @@ export const Game = () => {
         };
     }, []);
 
+    useEffect(() => {
+        if(data != null)
+            setFen(data)
+    }, [data]);
+
     function handleChangePosition(newPosition) {
-        if (typeof newPosition === 'string') {
-            setFen(newPosition);
-        } else if (newPosition && newPosition.fen) {
+        console.log(newPosition)
+        if (newPosition && newPosition.fen) {
             setFen(newPosition.fen);
-        } else {
-            console.log('Position changed:', newPosition);
         }
     }
 
